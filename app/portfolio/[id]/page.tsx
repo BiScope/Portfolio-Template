@@ -185,9 +185,6 @@ export default function PortfolioDetailPage() {
 
             {/* Description Paragraphs */}
             <div className="space-y-4 text-slate-700 leading-relaxed">
-              {project.intro && (
-                <p className="text-lg">{project.intro}</p>
-              )}
               {project.description && (
                 <>
                   {project.description.split('\n\n').map((paragraph, idx) => (

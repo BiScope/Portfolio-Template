@@ -82,7 +82,7 @@ export default function PortfolioGrid() {
                 {project.image_url && (
                   <Link 
                     href={`/portfolio/${project.id}`}
-                    className="relative h-48 w-full rounded-xl shadow-lg group-hover:-translate-y-2 transition-transform duration-300 border-2 border-gray-400 p-1 overflow-hidden group-hover:border-gray-500">
+                    className="relative h-48 w-full rounded-xl shadow-lg hover:-translate-y-2 transition-transform duration-300 border-2 border-gray-400 p-1 overflow-hidden hover:border-gray-500">
                       <img
                         src={project.image_url}
                         alt={project.title}
