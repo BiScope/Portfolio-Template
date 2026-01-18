@@ -3,7 +3,7 @@ import Recommendations from "@/components/About/Recommendations";
 
 export default function AboutPage() {
   return (
-    <div className="">
+    <div>
       <div className="bg-slate-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-6xl md:text-7xl font-bold">ABOUT ME</h1>
