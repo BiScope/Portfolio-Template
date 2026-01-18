@@ -75,37 +75,38 @@ export default function PortfolioGrid() {
         {projects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
-              <Link
+              <div
                 key={project.id}
-                href={`/portfolio/${project.id}`}
-                className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                className="group bg-white flex flex-col"
               >
                 {project.image_url && (
-                  <div className="relative h-48 w-full overflow-hidden">
-                    <img
-                      src={project.image_url}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
+                  <Link 
+                    href={`/portfolio/${project.id}`}
+                    className="relative h-48 w-full rounded-xl shadow-lg group-hover:-translate-y-2 transition-transform duration-300 border-2 border-gray-400 p-1 overflow-hidden group-hover:border-gray-500">
+                      <img
+                        src={project.image_url}
+                        alt={project.title}
+                        className="w-full padding-2 border-blue-300 rounded-md h-full object-cover"
+                      />
+                  </Link>
                 )}
                 {!project.image_url && (
                   <div className="h-48 w-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
                     <span className="text-6xl">📁</span>
                   </div>
                 )}
-                <div className="p-6">
+                <div className="p-4 flex-1">
                   <p className="text-sm text-blue-600 font-semibold mb-2">
                     {project.company}
                   </p>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {project.title}
                   </h3>
                   <p className="text-gray-600 text-sm line-clamp-2">
                     {project.intro}
                   </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         ) : (
