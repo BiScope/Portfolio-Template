@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Mail, Phone, MapPin, Linkedin, Github } from "lucide-react";
+import { getCachedData, setCachedData } from "@/lib/cache";
 
 interface ContactInfo {
   id: string;
@@ -18,13 +19,23 @@ export default function Footer() {
 
   useEffect(() => {
     async function fetchContactInfo() {
+      // Check cache first
+      const cachedContactInfo = getCachedData<ContactInfo[]>("contact_info");
+      if (cachedContactInfo) {
+        setContactInfo(cachedContactInfo);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("contact_info")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setContactInfo(data);
+        setCachedData("contact_info", data);
       }
     }
     fetchContactInfo();

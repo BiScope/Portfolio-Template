@@ -3,20 +3,31 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getCachedData, setCachedData } from "@/lib/cache";
 
 export default function Hero() {
   const [aboutIntro, setAboutIntro] = useState<string>("");
 
   useEffect(() => {
     async function fetchAboutIntro() {
+      // Check cache first
+      const cachedIntro = getCachedData<string>("about_intro");
+      if (cachedIntro) {
+        setAboutIntro(cachedIntro);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("about_sections")
         .select("content")
         .eq("order_index", 0)
+        .eq("is_active", true)
         .single();
       
       if (data) {
         setAboutIntro(data.content);
+        setCachedData("about_intro", data.content);
       }
     }
     fetchAboutIntro();

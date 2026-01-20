@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Star } from "lucide-react";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Testimonial {
   id: string;
@@ -16,17 +18,30 @@ interface Testimonial {
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTestimonials() {
+      // Check cache first
+      const cachedTestimonials = getCachedData<Testimonial[]>("testimonials");
+      if (cachedTestimonials) {
+        setTestimonials(cachedTestimonials);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("testimonials")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setTestimonials(data);
+        setCachedData("testimonials", data);
       }
+      setLoading(false);
     }
     fetchTestimonials();
   }, []);
@@ -59,6 +74,19 @@ export default function Testimonials() {
     return () => clearInterval(interval);
   }, [testimonials.length, itemsPerView]);
 
+  if (loading) {
+    return (
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-5xl font-bold text-center text-slate-900 mb-12 uppercase">
+            What Clients Say
+          </h2>
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -79,7 +107,7 @@ export default function Testimonials() {
                 return (
                   <div
                     key={`${testimonial.id}-${currentIndex}`}
-                    className={`flex-shrink-0 w-full md:w-[calc((100%-1rem)/2)] bg-gray-50 rounded-xl shadow-lg p-6 hover:shadow-2xl transition-all ${
+                    className={`flex-shrink-0 w-full md:w-[calc((100%-1rem)/2)] bg-gray-50 rounded-xl shadow-lg p-6 transition-all ${
                       isVisible ? 'animate-fade-in' : ''
                     }`}
                   >

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Skill {
   id: string;
@@ -61,22 +63,48 @@ const getTechUrl = (name: string): string => {
 
 export default function Skills() {
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchSkills() {
+      // Check cache first
+      const cachedSkills = getCachedData<Skill[]>("skills");
+      if (cachedSkills) {
+        setSkills(cachedSkills);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("skills")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setSkills(data);
+        setCachedData("skills", data);
       }
+      setLoading(false);
     }
     fetchSkills();
   }, []);
 
   const categories = ["Frontend", "Backend", "DevOps"];
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-5xl font-bold text-center text-slate-900 mb-12 uppercase">
+            Top Skills
+          </h2>
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">

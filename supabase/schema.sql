@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS about_sections (
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS skills (
   name TEXT NOT NULL,
   icon TEXT,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -27,6 +29,7 @@ CREATE TABLE IF NOT EXISTS companies (
   logo_url TEXT,
   website_url TEXT,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -40,6 +43,7 @@ CREATE TABLE IF NOT EXISTS projects (
   description TEXT,
   image_url TEXT,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -52,6 +56,7 @@ CREATE TABLE IF NOT EXISTS testimonials (
   avatar_url TEXT,
   rating INTEGER CHECK (rating >= 1 AND rating <= 5),
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -67,6 +72,7 @@ CREATE TABLE IF NOT EXISTS blogs (
   written_by TEXT DEFAULT 'Written by me',
   published_at TIMESTAMP WITH TIME ZONE,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -78,6 +84,7 @@ CREATE TABLE IF NOT EXISTS contact_info (
   value TEXT NOT NULL,
   icon TEXT,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

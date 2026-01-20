@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Star } from "lucide-react";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Testimonial {
   id: string;
@@ -15,20 +17,46 @@ interface Testimonial {
 
 export default function Recommendations() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTestimonials() {
+      // Check cache first
+      const cachedTestimonials = getCachedData<Testimonial[]>("testimonials");
+      if (cachedTestimonials) {
+        setTestimonials(cachedTestimonials);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("testimonials")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setTestimonials(data);
+        setCachedData("testimonials", data);
       }
+      setLoading(false);
     }
     fetchTestimonials();
   }, []);
+
+  if (loading) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-5xl font-bold text-center text-slate-900 mb-12 uppercase">
+            Recommendations
+          </h2>
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-20 bg-gray-50">

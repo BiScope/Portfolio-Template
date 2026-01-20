@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS project_images (
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   image_url TEXT NOT NULL,
   order_index INTEGER NOT NULL,
+  is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

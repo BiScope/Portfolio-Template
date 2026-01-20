@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Company {
   id: string;
@@ -12,20 +14,46 @@ interface Company {
 
 export default function Companies() {
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCompanies() {
+      // Check cache first
+      const cachedCompanies = getCachedData<Company[]>("companies");
+      if (cachedCompanies) {
+        setCompanies(cachedCompanies);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("companies")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setCompanies(data);
+        setCachedData("companies", data);
       }
+      setLoading(false);
     }
     fetchCompanies();
   }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-5xl font-bold text-center text-slate-900 mb-12 uppercase">
+            I Worked With
+          </h2>
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">

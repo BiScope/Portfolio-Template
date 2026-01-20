@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Blog {
   id: string;
@@ -17,20 +19,48 @@ interface Blog {
 
 export default function BlogList() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchBlogs() {
+      // Check cache first
+      const cachedBlogs = getCachedData<Blog[]>("blogs");
+      if (cachedBlogs) {
+        setBlogs(cachedBlogs);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("blogs")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setBlogs(data);
+        setCachedData("blogs", data);
       }
+      setLoading(false);
     }
     fetchBlogs();
   }, []);
+
+  if (loading) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-bold text-slate-900 mb-4 uppercase">
+              My Blogs
+            </h1>
+          </div>
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-20 bg-white">

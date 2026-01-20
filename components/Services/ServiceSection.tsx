@@ -2,27 +2,27 @@
 
 import Link from "next/link";
 import { Code2, Palette, Smartphone } from "lucide-react";
-
+import Image from "next/image";
 const services = [
   {
     id: "website",
     title: "Web Site",
-    icon: Code2,
-    intro: "Professional website development services tailored to your business needs. From responsive design to full-stack applications, I deliver modern, scalable web solutions that drive results.",
+    img: "/assets/services/website.jpg",
+    intro: "With a strong foundation in web development, I've specialized in full-stack technologies including React, Next.js, Node.js and Python. My expertise extends to database management with both SQL and NoSQL, ensuring optimized solutions. My commitment to delivering high-performance products swiftly sets me apart as an ideal choice for website development needs. I also have extensive experience in cloud computing platforms with AWS and MS Azure, enabling scalable and resilient DevOps solutions to the team.",
     imagePlaceholder: "🌐",
   },
   {
     id: "web-design",
     title: "Web Design",
-    icon: Palette,
-    intro: "Creative and user-centric web design that captures your brand identity. I craft intuitive interfaces and engaging user experiences that convert visitors into customers.",
+    img: "/assets/services/design.png",
+    intro: "My portfolio in web design spans various sectors, where I have transformed client visions into engaging, user-friendly web interfaces. I am proficient in various designing tools like Adobe XD, Figma and Axure, as well as project architecturing platforms such as Jira, ClickUp, Trello, etc. My proficiency in creating wireframes, mockups, and prototypes facilitates seamless collaboration with UX designers and developers, ensuring clear communication and project alignment throughout the design process.",
     imagePlaceholder: "🎨",
   },
   {
     id: "mobile",
     title: "Mobile",
-    icon: Smartphone,
-    intro: "Native and cross-platform mobile application development. I build performant, feature-rich mobile apps for iOS and Android that provide seamless user experiences.",
+    img: "/assets/services/mobile.png",
+    intro: "I have engaged in several software development life cycles, encompassing both web and mobile platforms, with a specialized focus on Android and iOS and hybird mobile experience leveraged by React Native, demonstrating proficiency across various stages from ideation to deployment. My mobile development experience emphasizes performance optimization, ensuring smooth and responsive user experiences through efficient coding practices and thorough performance testing.",
     imagePlaceholder: "📱",
   },
 ];
@@ -45,9 +45,6 @@ export default function ServiceSection() {
               className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-12`}
             >
               <div className={`flex-1 ${isEven ? 'md:pr-12' : 'md:pl-12'}`}>
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-6">
-                  <Icon className="w-8 h-8 text-blue-600" />
-                </div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-6">
                   {service.title}
                 </h2>
@@ -70,17 +67,17 @@ export default function ServiceSection() {
                 </div>
               </div>
               <div className="flex-1">
-                <div className="relative w-full h-96 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
+                <div className="relative w-96 h-96 flex items-center justify-center overflow-hidden">
                   <div className="text-9xl">{service.imagePlaceholder}</div>
                   {/* You can replace this with an actual image */}
-                  {/* {service.image && (
+                  {service.img && (
                     <Image
-                      src={service.image}
+                      src={service.img}
                       alt={service.title}
                       fill
                       className="object-cover"
                     />
-                  )} */}
+                  )}
                 </div>
               </div>
             </div>

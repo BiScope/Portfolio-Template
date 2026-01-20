@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Project {
   id: string;
@@ -21,6 +23,7 @@ export default function PortfolioGrid() {
     categoryParam || "Website"
   );
   const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (categoryParam) {
@@ -32,7 +35,19 @@ export default function PortfolioGrid() {
 
   useEffect(() => {
     async function fetchProjects() {
-      let query = supabase.from("projects").select("*").order("order_index");
+      setLoading(true);
+      
+      // Check cache first
+      const cacheKey = `projects_${selectedCategory}`;
+      const cachedProjects = getCachedData<Project[]>(cacheKey);
+      if (cachedProjects) {
+        setProjects(cachedProjects);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
+      let query = supabase.from("projects").select("*").eq("is_active", true).order("order_index");
 
       if (selectedCategory !== "All") {
         query = query.eq("category", selectedCategory);
@@ -42,7 +57,9 @@ export default function PortfolioGrid() {
 
       if (data) {
         setProjects(data);
+        setCachedData(cacheKey, data);
       }
+      setLoading(false);
     }
     fetchProjects();
   }, [selectedCategory]);
@@ -72,7 +89,9 @@ export default function PortfolioGrid() {
           ))}
         </div>
 
-        {projects.length > 0 ? (
+        {loading ? (
+          <LoadingSpinner />
+        ) : projects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project) => (
               <div

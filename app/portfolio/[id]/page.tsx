@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface Project {
   id: string;
@@ -36,24 +38,45 @@ export default function PortfolioDetailPage() {
 
   useEffect(() => {
     async function fetchProject() {
+      if (!params.id) return;
+
+      // Check cache first
+      const cacheKey = `project_${params.id}`;
+      const cachedProject = getCachedData<Project>(cacheKey);
+      const cachedImages = getCachedData<ProjectImage[]>(`project_images_${params.id}`);
+
+      if (cachedProject) {
+        setProject(cachedProject);
+        if (cachedImages) {
+          setProjectImages(cachedImages);
+        }
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data, error } = await supabase
         .from("projects")
         .select("*")
         .eq("id", params.id)
+        .eq("is_active", true)
         .single();
 
       if (data) {
         setProject(data);
+        setCachedData(cacheKey, data);
         
         // Fetch project images
         const { data: images } = await supabase
           .from("project_images")
           .select("*")
           .eq("project_id", params.id)
+          .eq("is_active", true)
           .order("order_index");
         
         if (images) {
           setProjectImages(images);
+          setCachedData(`project_images_${params.id}`, images);
         }
       } else if (error) {
         console.error("Error fetching project:", error);

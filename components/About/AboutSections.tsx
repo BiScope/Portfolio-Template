@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Briefcase, Building2, Handshake, Users, Brain, TrendingUp } from "lucide-react";
+import { getCachedData, setCachedData } from "@/lib/cache";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface AboutSection {
   id: string;
@@ -13,17 +15,30 @@ interface AboutSection {
 
 export default function AboutSections() {
   const [sections, setSections] = useState<AboutSection[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchSections() {
+      // Check cache first
+      const cachedSections = getCachedData<AboutSection[]>("about_sections");
+      if (cachedSections) {
+        setSections(cachedSections);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch from Supabase
       const { data } = await supabase
         .from("about_sections")
         .select("*")
+        .eq("is_active", true)
         .order("order_index");
       
       if (data) {
         setSections(data);
+        setCachedData("about_sections", data);
       }
+      setLoading(false);
     }
     fetchSections();
   }, []);
@@ -70,6 +85,16 @@ export default function AboutSections() {
     content: section.content,
     order_index: idx,
   }));
+
+  if (loading) {
+    return (
+      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <LoadingSpinner />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-20 bg-white">
