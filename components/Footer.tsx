@@ -54,10 +54,10 @@ export default function Footer() {
     }
   };
 
-  const defaultContactInfo = [
-    { type: "email", label: "Email", value: "contact@example.com" },
-    { type: "phone", label: "Phone", value: "+1 (555) 123-4567" },
-    { type: "location", label: "Location", value: "San Francisco, CA" },
+  const defaultContactInfo: ContactInfo[] = [
+    { id: "default-email", type: "email", label: "Email", value: "contact@example.com", icon: null },
+    { id: "default-phone", type: "phone", label: "Phone", value: "+1 (555) 123-4567", icon: null },
+    { id: "default-location", type: "location", label: "Location", value: "San Francisco, CA", icon: null },
   ];
 
   const displayContactInfo = contactInfo.length > 0 ? contactInfo : defaultContactInfo;

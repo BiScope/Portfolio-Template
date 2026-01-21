@@ -36,7 +36,6 @@ export default function ServiceSection() {
         </h1>
         <div className="space-y-32">
         {services.map((service, index) => {
-          const Icon = service.icon;
           const isEven = index % 2 === 0;
           
           return (
