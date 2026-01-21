@@ -142,7 +142,9 @@ export default function Testimonials() {
                         ))}
                       </div>
                     )}
-                    <p className="text-gray-700 italic">"{testimonial.content}"</p>
+                    <p className="text-gray-700 italic">
+                      &quot;{testimonial.content}&quot;
+                    </p>
                   </div>
                 );
               })}
